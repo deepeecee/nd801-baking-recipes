@@ -20,7 +20,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import davidchou.dev.bakingrecipes.data.Recipe;
-import davidchou.dev.bakingrecipes.dummy.DummyContent;
+import davidchou.dev.bakingrecipes.data.RecipeContent;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -34,11 +34,11 @@ import java.util.List;
  * An activity representing a list of Items. This activity
  * has different presentations for handset and tablet-size devices. On
  * handsets, the activity presents a list of items, which when touched,
- * lead to a {@link ItemDetailActivity} representing
+ * lead to a {@link RecipeStepsActivity} representing
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class ItemListActivity extends AppCompatActivity {
+public class RecipeListActivity extends AppCompatActivity {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -88,6 +88,7 @@ public class ItemListActivity extends AppCompatActivity {
             InputStream is = getResources().openRawResource(R.raw.baking_data);
             Reader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
             mRecipes = gson.fromJson(reader, recipeListType);
+            RecipeContent.populateRecipeMap(mRecipes);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -101,25 +102,25 @@ public class ItemListActivity extends AppCompatActivity {
     public static class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final ItemListActivity mParentActivity;
+        private final RecipeListActivity mParentActivity;
         private final List<Recipe> mValues;
         private final boolean mTwoPane;
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Recipe item = (Recipe) view.getTag();
+                Recipe recipe = (Recipe) view.getTag();
                 if (mTwoPane) {
                     Bundle arguments = new Bundle();
-                    arguments.putString(ItemDetailFragment.ARG_ITEM_ID, item.getName());
-                    ItemDetailFragment fragment = new ItemDetailFragment();
+                    arguments.putInt(RecipeStepsFragment.ARG_RECIPE_ID, recipe.getId());
+                    RecipeStepsFragment fragment = new RecipeStepsFragment();
                     fragment.setArguments(arguments);
                     mParentActivity.getSupportFragmentManager().beginTransaction()
                             .replace(R.id.item_detail_container, fragment)
                             .commit();
                 } else {
                     Context context = view.getContext();
-                    Intent intent = new Intent(context, ItemDetailActivity.class);
-                    intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, item.getName());
+                    Intent intent = new Intent(context, RecipeStepsActivity.class);
+                    intent.putExtra(RecipeStepsFragment.ARG_RECIPE_ID, recipe.getId());
 
                     context.startActivity(intent);
                 }
@@ -127,7 +128,7 @@ public class ItemListActivity extends AppCompatActivity {
         };
 
         SimpleItemRecyclerViewAdapter(
-                ItemListActivity parent,
+                RecipeListActivity parent,
                 List<Recipe> recipes,
                 boolean twoPane
         ) {
