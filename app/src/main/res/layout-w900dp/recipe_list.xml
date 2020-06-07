@@ -17,14 +17,14 @@
     -->
 
     <FrameLayout
-        android:id="@+id/item_detail_container"
+        android:id="@+id/recipe_detail_container"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="3" />
 
     <androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/item_list"
+        android:id="@+id/recipe_list"
         android:name="davidchou.dev.bakingrecipes.ItemListFragment"
         android:layout_width="@dimen/item_width"
         android:layout_height="match_parent"
@@ -32,6 +32,6 @@
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
         tools:context="davidchou.dev.bakingrecipes.RecipeListActivity"
-        tools:listitem="@layout/item_list_content" />
+        tools:listitem="@layout/recipe_list_content" />
 
 </LinearLayout>

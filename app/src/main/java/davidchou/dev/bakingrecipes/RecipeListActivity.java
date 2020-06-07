@@ -14,6 +14,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +52,7 @@ public class RecipeListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_list);
+        setContentView(R.layout.activity_recipe_list);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -68,7 +69,7 @@ public class RecipeListActivity extends AppCompatActivity {
 
         populateRecipesFromJson();
 
-        if (findViewById(R.id.item_detail_container) != null) {
+        if (findViewById(R.id.recipe_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-w900dp).
             // If this view is present, then the
@@ -76,7 +77,7 @@ public class RecipeListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        View recyclerView = findViewById(R.id.item_list);
+        View recyclerView = findViewById(R.id.recipe_list);
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
     }
@@ -96,11 +97,11 @@ public class RecipeListActivity extends AppCompatActivity {
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView
-                .setAdapter(new SimpleItemRecyclerViewAdapter(this, mRecipes, mTwoPane));
+                .setAdapter(new RecipeRecyclerViewAdapter(this, mRecipes, mTwoPane));
     }
 
-    public static class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
+    public static class RecipeRecyclerViewAdapter
+            extends RecyclerView.Adapter<RecipeRecyclerViewAdapter.ViewHolder> {
 
         private final RecipeListActivity mParentActivity;
         private final List<Recipe> mValues;
@@ -109,25 +110,26 @@ public class RecipeListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Recipe recipe = (Recipe) view.getTag();
+                Log.v(RecipeListActivity.class.getSimpleName() + " Two Pane? ",
+                      String.valueOf(mTwoPane));
                 if (mTwoPane) {
                     Bundle arguments = new Bundle();
                     arguments.putInt(RecipeStepsFragment.ARG_RECIPE_ID, recipe.getId());
                     RecipeStepsFragment fragment = new RecipeStepsFragment();
                     fragment.setArguments(arguments);
                     mParentActivity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.item_detail_container, fragment)
+                            .replace(R.id.recipe_detail_container, fragment)
                             .commit();
                 } else {
                     Context context = view.getContext();
                     Intent intent = new Intent(context, RecipeStepsActivity.class);
                     intent.putExtra(RecipeStepsFragment.ARG_RECIPE_ID, recipe.getId());
-
                     context.startActivity(intent);
                 }
             }
         };
 
-        SimpleItemRecyclerViewAdapter(
+        RecipeRecyclerViewAdapter(
                 RecipeListActivity parent,
                 List<Recipe> recipes,
                 boolean twoPane
@@ -140,7 +142,7 @@ public class RecipeListActivity extends AppCompatActivity {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_list_content, parent, false);
+                    .inflate(R.layout.recipe_list_content, parent, false);
             return new ViewHolder(view);
         }
 

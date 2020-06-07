@@ -10,4 +10,8 @@ public class RecipeIngredient {
         this.measure = measure;
         this.ingredient = ingredient;
     }
+
+    public String toString() {
+        return this.quantity + " " + this.measure.toLowerCase() + " " + this.ingredient.toLowerCase();
+    }
 }
