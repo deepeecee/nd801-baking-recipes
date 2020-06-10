@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
@@ -19,9 +18,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import davidchou.dev.bakingrecipes.data.Recipe;
 import davidchou.dev.bakingrecipes.data.RecipeContent;
+import davidchou.dev.bakingrecipes.network.RetrofitRecipeAPI;
+import davidchou.dev.bakingrecipes.network.RetrofitRecipeInstance;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -67,7 +72,7 @@ public class RecipeListActivity extends AppCompatActivity {
             }
         });
 
-        populateRecipesFromJson();
+        populateRecipesFromNetworkJson();
 
         if (findViewById(R.id.recipe_steps_secondary_container) != null) {
             // The detail container view will be present only in the
@@ -76,15 +81,34 @@ public class RecipeListActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
-
-        View recyclerView = findViewById(R.id.recipe_list);
-        assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
     }
 
-    private void populateRecipesFromJson() {
+    private void populateRecipesFromNetworkJson() {
+        RetrofitRecipeAPI service = RetrofitRecipeInstance.getInstance().create(RetrofitRecipeAPI.class);
+        Call<List<Recipe>> call = service.loadRecipes();
+        call.enqueue(new Callback<List<Recipe>>() {
+            @Override
+            public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
+                Log.v(RecipeListActivity.class.getSimpleName(), "Used retrofit to get recipes!");
+                mRecipes = response.body();
+                RecipeContent.populateRecipeMap(mRecipes);
 
-        // TODO: Modify this code so that it leverages Retrofit to pull the JSON data.
+                View recyclerView = findViewById(R.id.recipe_list);
+                assert recyclerView != null;
+                setupRecyclerView();
+            }
+
+            @Override
+            public void onFailure(Call<List<Recipe>> call, Throwable t) {
+                Toast.makeText(RecipeListActivity.this, "Couldn't retrieve recipes! Please make " +
+                                       "sure you are connected to the internet.",
+                               Toast.LENGTH_SHORT).show();
+                populateRecipesFromLocalJson();
+            }
+        });
+    }
+
+    private void populateRecipesFromLocalJson() {
         Gson gson = new Gson();
         try {
             Type recipeListType = TypeToken.getParameterized(List.class, Recipe.class).getType();
@@ -92,12 +116,15 @@ public class RecipeListActivity extends AppCompatActivity {
             Reader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
             mRecipes = gson.fromJson(reader, recipeListType);
             RecipeContent.populateRecipeMap(mRecipes);
+            setupRecyclerView();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
+    private void setupRecyclerView() {
+        RecyclerView recyclerView = findViewById(R.id.recipe_list);
+        assert recyclerView != null;
         recyclerView
                 .setAdapter(new RecipeRecyclerViewAdapter(this, mRecipes, mTwoPane));
     }
@@ -112,8 +139,6 @@ public class RecipeListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Recipe recipe = (Recipe) view.getTag();
-                Log.v(RecipeListActivity.class.getSimpleName() + " Two Pane? ",
-                      String.valueOf(mTwoPane));
                 Context context = view.getContext();
                 Intent intent = new Intent(context, RecipeStepsActivity.class);
                 intent.putExtra(RecipeStepsFragment.ARG_RECIPE_ID, recipe.getId());
