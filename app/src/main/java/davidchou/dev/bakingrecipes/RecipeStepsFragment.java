@@ -1,8 +1,6 @@
 package davidchou.dev.bakingrecipes;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -33,6 +31,7 @@ import davidchou.dev.bakingrecipes.data.RecipeStep;
 public class RecipeStepsFragment extends Fragment {
 
     public static final String ARG_RECIPE_ID = "recipe_id";
+    public static final String TWO_PANE_KEY = "is_two_pane_key";
 
     private Recipe mRecipe;
 
@@ -71,6 +70,9 @@ public class RecipeStepsFragment extends Fragment {
             }
         }
 
+        if (getArguments().containsKey(TWO_PANE_KEY)) {
+            mTwoPane = getArguments().getBoolean(TWO_PANE_KEY);
+        }
     }
 
     @Override
@@ -80,7 +82,6 @@ public class RecipeStepsFragment extends Fragment {
     ) {
         View rootView = inflater.inflate(R.layout.fragment_recipe_steps_list, container, false);
 
-        // TODO: We will need to change this later to populate important recipe steps.
         if (mRecipe != null) {
             Log.v(RecipeStepsFragment.class.getSimpleName() + "Inflation: ", mRecipe.getName());
             TextView ingredientsView =
@@ -116,39 +117,21 @@ public class RecipeStepsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 RecipeStep recipeStep = (RecipeStep) view.getTag();
-                Log.v(RecipeStepsFragment.class.getSimpleName(), "Logged a click on the " +
-                        "individual step" +
-                        ".");
                 Log.v(RecipeStepsFragment.class.getSimpleName() + " Two Pane? ",
                       String.valueOf(mTwoPane));
 
-                if (mTwoPane) {
-
-                    //                    Bundle arguments = new Bundle();
-                    //                    arguments.putInt(RecipeStepsFragment.ARG_RECIPE_ID,
-                    //                    recipe.getId());
-                    //                    RecipeStepsFragment fragment = new RecipeStepsFragment();
-                    //                    fragment.setArguments(arguments);
-                    //                    mParentFragment.getFragmentManager().beginTransaction()
-                    //                            .replace(R.id.item_detail_container, fragment)
-                    //                            .commit();
-                } else {
-                    Bundle arguments = new Bundle();
-                    arguments.putInt(
-                            RecipeStepsFragment.ARG_RECIPE_ID,
-                            mRecipe.getId());
-                    arguments.putInt(
-                            RecipeIndividualStepFragment.ARG_RECIPE_STEP_ID,
-                            recipeStep.getId());
-
-                    Log.v(RecipeStepsFragment.class.getSimpleName(), "Entered twoPane boolean " +
-                            "logic.");
-                    RecipeIndividualStepFragment stepFragment = new RecipeIndividualStepFragment();
-                    stepFragment.setArguments(arguments);
-                    mParentFragment.getActivity().getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.recipe_detail_container, stepFragment, "findThisFragment")
-                            .addToBackStack(null).commit();
-                }
+                Bundle arguments = new Bundle();
+                arguments.putInt(
+                        RecipeStepsFragment.ARG_RECIPE_ID,
+                        mRecipe.getId());
+                arguments.putInt(
+                        RecipeIndividualStepFragment.ARG_RECIPE_STEP_ID,
+                        recipeStep.getId());
+                RecipeIndividualStepFragment stepFragment = new RecipeIndividualStepFragment();
+                stepFragment.setArguments(arguments);
+                mParentFragment.getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.recipe_video_container, stepFragment, "findThisFragment")
+                        .addToBackStack(null).commit();
             }
         };
 
@@ -196,8 +179,8 @@ public class RecipeStepsFragment extends Fragment {
 
             ViewHolder(View view) {
                 super(view);
-                mIdView = (TextView) view.findViewById(R.id.id_text);
-                mContentView = (TextView) view.findViewById(R.id.content);
+                mIdView = (TextView) view.findViewById(R.id.previous_step_button);
+                mContentView = (TextView) view.findViewById(R.id.next_step_button);
             }
         }
     }

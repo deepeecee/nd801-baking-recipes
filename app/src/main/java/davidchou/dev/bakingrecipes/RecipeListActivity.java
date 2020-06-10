@@ -69,7 +69,7 @@ public class RecipeListActivity extends AppCompatActivity {
 
         populateRecipesFromJson();
 
-        if (findViewById(R.id.recipe_detail_container) != null) {
+        if (findViewById(R.id.recipe_steps_secondary_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-w900dp).
             // If this view is present, then the
@@ -83,6 +83,8 @@ public class RecipeListActivity extends AppCompatActivity {
     }
 
     private void populateRecipesFromJson() {
+
+        // TODO: Modify this code so that it leverages Retrofit to pull the JSON data.
         Gson gson = new Gson();
         try {
             Type recipeListType = TypeToken.getParameterized(List.class, Recipe.class).getType();
@@ -112,20 +114,11 @@ public class RecipeListActivity extends AppCompatActivity {
                 Recipe recipe = (Recipe) view.getTag();
                 Log.v(RecipeListActivity.class.getSimpleName() + " Two Pane? ",
                       String.valueOf(mTwoPane));
-                if (mTwoPane) {
-                    Bundle arguments = new Bundle();
-                    arguments.putInt(RecipeStepsFragment.ARG_RECIPE_ID, recipe.getId());
-                    RecipeStepsFragment fragment = new RecipeStepsFragment();
-                    fragment.setArguments(arguments);
-                    mParentActivity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.recipe_detail_container, fragment)
-                            .commit();
-                } else {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, RecipeStepsActivity.class);
-                    intent.putExtra(RecipeStepsFragment.ARG_RECIPE_ID, recipe.getId());
-                    context.startActivity(intent);
-                }
+                Context context = view.getContext();
+                Intent intent = new Intent(context, RecipeStepsActivity.class);
+                intent.putExtra(RecipeStepsFragment.ARG_RECIPE_ID, recipe.getId());
+                intent.putExtra(RecipeStepsFragment.TWO_PANE_KEY, mTwoPane);
+                context.startActivity(intent);
             }
         };
 
@@ -166,8 +159,8 @@ public class RecipeListActivity extends AppCompatActivity {
 
             ViewHolder(View view) {
                 super(view);
-                mIdView = (TextView) view.findViewById(R.id.id_text);
-                mContentView = (TextView) view.findViewById(R.id.content);
+                mIdView = (TextView) view.findViewById(R.id.previous_step_button);
+                mContentView = (TextView) view.findViewById(R.id.next_step_button);
             }
         }
     }

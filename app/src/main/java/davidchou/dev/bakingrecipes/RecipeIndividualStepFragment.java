@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -72,8 +74,28 @@ public class RecipeIndividualStepFragment extends Fragment {
                 "individual step fragment.");
         View rootView = inflater.inflate(R.layout.fragment_individual_step, container, false);
 
+        if (mRecipeStep != null) {
+            initializePlayer(rootView);
+            ((TextView) rootView.findViewById(R.id.step_instruction))
+                    .setText("Step " + mRecipeStep.getId() + ": " + mRecipeStep.getDescription());
+
+            if (mRecipeStep.getId() == 0) {
+                ((Button) rootView.findViewById(R.id.previous_step_button))
+                        .setVisibility(View.INVISIBLE);
+            }
+
+            if (mRecipeStep.getId() == mRecipe.getSteps().size()-1) {
+                ((Button) rootView.findViewById(R.id.next_step_button))
+                        .setVisibility(View.INVISIBLE);
+            }
+        }
+
+        return rootView;
+    }
+
+    private void initializePlayer(View rootView) {
         Context context = getContext();
-        SimpleExoPlayer player = new SimpleExoPlayer.Builder(context).build();
+        player = new SimpleExoPlayer.Builder(context).build();
         mPlayerView = rootView.findViewById(R.id.video_view);
         mPlayerView.setPlayer(player);
         // Produces DataSource instances through which media data is loaded.
@@ -88,7 +110,24 @@ public class RecipeIndividualStepFragment extends Fragment {
 
         // Prepare the player with the source.
         player.prepare(videoSource);
-
-        return rootView;
+        player.setPlayWhenReady(true);
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (Util.SDK_INT <= 23) {
+            player.release();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            player.release();
+        }
+    }
+
+
 }

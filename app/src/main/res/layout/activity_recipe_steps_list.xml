@@ -8,11 +8,14 @@
     tools:context=".RecipeStepsActivity"
     tools:ignore="MergeRootFrame">
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/recipe_detail_container"
+    <FrameLayout
+        android:id="@+id/recipe_steps_secondary_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <include layout="@layout/activity_recipe_steps_secondary" />
+    </FrameLayout>
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
@@ -47,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|start"
         android:layout_margin="@dimen/fab_margin"
-        app:layout_anchor="@+id/recipe_detail_container"
+        app:layout_anchor="@+id/recipe_steps_secondary_container"
         app:layout_anchorGravity="top|end"
         app:srcCompat="@android:drawable/stat_notify_chat" />
 

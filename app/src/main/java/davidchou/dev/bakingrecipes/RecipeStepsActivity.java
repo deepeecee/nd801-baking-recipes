@@ -8,6 +8,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +24,9 @@ import android.view.MenuItem;
  */
 public class RecipeStepsActivity extends AppCompatActivity {
 
+    private boolean mTwoPane;
+    private final int FIRST_STEP_ID = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +38,7 @@ public class RecipeStepsActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Send some data to another person.", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -45,15 +49,10 @@ public class RecipeStepsActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        // savedInstanceState is non-null when there is fragment state
-        // saved from previous configurations of this activity
-        // (e.g. when rotating the screen from portrait to landscape).
-        // In this case, the fragment will automatically be re-added
-        // to its container so we don't need to manually add it.
-        // For more information, see the Fragments API guide at:
-        //
-        // http://developer.android.com/guide/components/fragments.html
-        //
+        if (findViewById(R.id.recipe_video_container) != null) {
+            mTwoPane = true;
+        }
+
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
@@ -61,11 +60,28 @@ public class RecipeStepsActivity extends AppCompatActivity {
             arguments.putInt(
                     RecipeStepsFragment.ARG_RECIPE_ID,
                     getIntent().getIntExtra(RecipeStepsFragment.ARG_RECIPE_ID, 1));
+
+            arguments.putBoolean(RecipeStepsFragment.TWO_PANE_KEY,
+                                 mTwoPane);
+
+            arguments.putInt(
+                    RecipeIndividualStepFragment.ARG_RECIPE_STEP_ID,
+                    FIRST_STEP_ID);
+
             RecipeStepsFragment fragment = new RecipeStepsFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.recipe_detail_container, fragment)
+                    .add(R.id.recipe_steps_secondary_container, fragment)
                     .commit();
+
+            if (mTwoPane) {
+                Log.v(RecipeStepsActivity.class.getSimpleName(), "In mTwoPane logic.");
+                RecipeIndividualStepFragment individualFragment = new RecipeIndividualStepFragment();
+                individualFragment.setArguments(arguments);
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.recipe_video_container, individualFragment)
+                        .commit();
+            }
         }
     }
 
@@ -73,12 +89,6 @@ public class RecipeStepsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            // This ID represents the Home or Up button. In the case of this
-            // activity, the Up button is shown. For
-            // more details, see the Navigation pattern on Android Design:
-            //
-            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-            //
             navigateUpTo(new Intent(this, RecipeListActivity.class));
             return true;
         }
