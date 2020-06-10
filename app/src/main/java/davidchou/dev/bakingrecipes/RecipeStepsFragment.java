@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.appcompat.widget.Toolbar;
 
 import java.util.List;
 
@@ -60,10 +61,10 @@ public class RecipeStepsFragment extends Fragment {
             if (mRecipe != null) {
                 Log.v(RecipeStepsFragment.class.getSimpleName() + "Creation: ", mRecipe.getName());
                 Activity activity = this.getActivity();
-                CollapsingToolbarLayout appBarLayout =
-                        (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-                if (appBarLayout != null) {
-                    appBarLayout.setTitle(mRecipe.getName());
+
+                Toolbar toolbar = this.getActivity().findViewById(R.id.toolbar);
+                if (toolbar != null) {
+                    toolbar.setTitle(mRecipe.getName());
                 }
 
                 mRecipeSteps = mRecipe.getSteps();
@@ -88,12 +89,13 @@ public class RecipeStepsFragment extends Fragment {
                     (TextView) rootView.findViewById(R.id.recipe_ingredients);
             assert ingredientsView != null;
             for (RecipeIngredient ingredient : mRecipe.getIngredients()) {
-                ingredientsView.append("- " + ingredient.toString() + "\n\n");
+                ingredientsView.append("- " + ingredient.toString() + "\n");
             }
 
-            View recyclerView = rootView.findViewById(R.id.recipe_steps_list);
+            RecyclerView recyclerView = rootView.findViewById(R.id.recipe_steps_list);
             assert recyclerView != null;
-            setupRecyclerView((RecyclerView) recyclerView);
+            setupRecyclerView(recyclerView);
+//            recyclerView.setNestedScrollingEnabled(false);
         }
 
         return rootView;
@@ -117,8 +119,9 @@ public class RecipeStepsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 RecipeStep recipeStep = (RecipeStep) view.getTag();
-                Log.v(RecipeStepsFragment.class.getSimpleName() + " Two Pane? ",
-                      String.valueOf(mTwoPane));
+                Log.v(
+                        RecipeStepsFragment.class.getSimpleName() + " Two Pane? ",
+                        String.valueOf(mTwoPane));
 
                 Bundle arguments = new Bundle();
                 arguments.putInt(
@@ -129,9 +132,16 @@ public class RecipeStepsFragment extends Fragment {
                         recipeStep.getId());
                 RecipeIndividualStepFragment stepFragment = new RecipeIndividualStepFragment();
                 stepFragment.setArguments(arguments);
-                mParentFragment.getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.recipe_video_container, stepFragment, "findThisFragment")
-                        .addToBackStack(null).commit();
+
+                if (mTwoPane) {
+                    mParentFragment.getActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.recipe_video_container, stepFragment, "findThisFragment")
+                            .addToBackStack(null).commit();
+                } else {
+                    mParentFragment.getActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.recipe_steps_secondary_container, stepFragment, "findThisFragment")
+                            .addToBackStack(null).commit();
+                }
             }
         };
 

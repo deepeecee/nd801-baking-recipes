@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -55,9 +56,9 @@ public class RecipeIndividualStepFragment extends Fragment {
                 if (mRecipeStep != null) {
                     mVideoUrl = mRecipeStep.getVideoURL();
 
-                    CollapsingToolbarLayout appBarLayout = this.getActivity().findViewById(R.id.toolbar_layout);
-                    if (appBarLayout != null) {
-                        appBarLayout.setTitle(mRecipeStep.getShortDescription());
+                    Toolbar toolbar = this.getActivity().findViewById(R.id.toolbar);
+                    if (toolbar != null) {
+                        toolbar.setTitle(mRecipeStep.getShortDescription());
                     }
                 }
             }

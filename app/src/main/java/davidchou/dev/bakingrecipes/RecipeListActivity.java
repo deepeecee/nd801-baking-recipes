@@ -159,8 +159,8 @@ public class RecipeListActivity extends AppCompatActivity {
 
             ViewHolder(View view) {
                 super(view);
-                mIdView = (TextView) view.findViewById(R.id.previous_step_button);
-                mContentView = (TextView) view.findViewById(R.id.next_step_button);
+                mIdView = (TextView) view.findViewById(R.id.list_item_id);
+                mContentView = (TextView) view.findViewById(R.id.list_item_content);
             }
         }
     }
