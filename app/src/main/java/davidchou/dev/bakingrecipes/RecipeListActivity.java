@@ -1,7 +1,5 @@
 package davidchou.dev.bakingrecipes;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,13 +11,10 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import davidchou.dev.bakingrecipes.adapter.RecipeRecyclerViewAdapter;
 import davidchou.dev.bakingrecipes.data.Recipe;
 import davidchou.dev.bakingrecipes.data.RecipeContent;
 import davidchou.dev.bakingrecipes.network.RetrofitRecipeAPI;
@@ -40,7 +35,7 @@ import java.util.List;
  * An activity representing a list of Items. This activity
  * has different presentations for handset and tablet-size devices. On
  * handsets, the activity presents a list of items, which when touched,
- * lead to a {@link RecipeStepsActivity} representing
+ * lead to a {@link StepListActivity} representing
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
@@ -75,10 +70,6 @@ public class RecipeListActivity extends AppCompatActivity {
         populateRecipesFromNetworkJson();
 
         if (findViewById(R.id.recipe_steps_secondary_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
             mTwoPane = true;
         }
     }
@@ -89,7 +80,6 @@ public class RecipeListActivity extends AppCompatActivity {
         call.enqueue(new Callback<List<Recipe>>() {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
-                Log.v(RecipeListActivity.class.getSimpleName(), "Used retrofit to get recipes!");
                 mRecipes = response.body();
                 RecipeContent.populateRecipeMap(mRecipes);
 
@@ -127,66 +117,5 @@ public class RecipeListActivity extends AppCompatActivity {
         assert recyclerView != null;
         recyclerView
                 .setAdapter(new RecipeRecyclerViewAdapter(this, mRecipes, mTwoPane));
-    }
-
-    public static class RecipeRecyclerViewAdapter
-            extends RecyclerView.Adapter<RecipeRecyclerViewAdapter.ViewHolder> {
-
-        private final RecipeListActivity mParentActivity;
-        private final List<Recipe> mValues;
-        private final boolean mTwoPane;
-        private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Recipe recipe = (Recipe) view.getTag();
-                Context context = view.getContext();
-                Intent intent = new Intent(context, RecipeStepsActivity.class);
-                intent.putExtra(RecipeStepsFragment.ARG_RECIPE_ID, recipe.getId());
-                intent.putExtra(RecipeStepsFragment.TWO_PANE_KEY, mTwoPane);
-                context.startActivity(intent);
-            }
-        };
-
-        RecipeRecyclerViewAdapter(
-                RecipeListActivity parent,
-                List<Recipe> recipes,
-                boolean twoPane
-        ) {
-            mValues = recipes;
-            mParentActivity = parent;
-            mTwoPane = twoPane;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.recipe_list_content, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mIdView.setText(String.valueOf(mValues.get(position).getId()));
-            holder.mContentView.setText(mValues.get(position).getName());
-
-            holder.itemView.setTag(mValues.get(position));
-            holder.itemView.setOnClickListener(mOnClickListener);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mValues.size();
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            final TextView mIdView;
-            final TextView mContentView;
-
-            ViewHolder(View view) {
-                super(view);
-                mIdView = (TextView) view.findViewById(R.id.list_item_id);
-                mContentView = (TextView) view.findViewById(R.id.list_item_content);
-            }
-        }
     }
 }

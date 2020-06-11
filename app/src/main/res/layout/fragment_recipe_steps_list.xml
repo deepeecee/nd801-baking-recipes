@@ -28,7 +28,7 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="12dp"
             android:textSize="12sp"
-            tools:context=".RecipeStepsFragment" />
+            tools:context=".StepListFragment" />
 
         <include
             layout="@layout/recipe_steps_list"

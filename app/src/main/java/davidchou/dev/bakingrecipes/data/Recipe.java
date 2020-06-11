@@ -6,12 +6,12 @@ public class Recipe {
 
     private int id;
     private String name;
-    private List<RecipeIngredient> ingredients;
-    private List<RecipeStep> steps;
+    private List<Ingredient> ingredients;
+    private List<Step> steps;
     private int servings;
     private String image;
 
-    public Recipe(int id, String name, List<RecipeIngredient> ingredients, List<RecipeStep> steps
+    public Recipe(int id, String name, List<Ingredient> ingredients, List<Step> steps
             , int servings, String image) {
         this.id = id;
         this.name = name;
@@ -37,19 +37,19 @@ public class Recipe {
         this.name = name;
     }
 
-    public List<RecipeIngredient> getIngredients() {
+    public List<Ingredient> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(List<RecipeIngredient> ingredients) {
+    public void setIngredients(List<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public List<RecipeStep> getSteps() {
+    public List<Step> getSteps() {
         return steps;
     }
 
-    public void setSteps(List<RecipeStep> steps) {
+    public void setSteps(List<Step> steps) {
         this.steps = steps;
     }
 

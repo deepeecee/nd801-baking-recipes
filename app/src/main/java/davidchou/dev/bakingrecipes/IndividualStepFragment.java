@@ -1,6 +1,5 @@
 package davidchou.dev.bakingrecipes;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -20,21 +18,20 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import davidchou.dev.bakingrecipes.data.Recipe;
 import davidchou.dev.bakingrecipes.data.RecipeContent;
-import davidchou.dev.bakingrecipes.data.RecipeStep;
+import davidchou.dev.bakingrecipes.data.Step;
 
-public class RecipeIndividualStepFragment extends Fragment {
+public class IndividualStepFragment extends Fragment {
 
     public static final String ARG_RECIPE_STEP_ID = "recipe_step_id";
 
     private Recipe mRecipe;
-    private RecipeStep mRecipeStep;
+    private Step mStep;
 
     private PlayerView mPlayerView;
     private SimpleExoPlayer player;
@@ -47,18 +44,18 @@ public class RecipeIndividualStepFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(RecipeStepsFragment.ARG_RECIPE_ID)) {
-            mRecipe = RecipeContent.RECIPE_MAP.get(getArguments().getInt(RecipeStepsFragment.ARG_RECIPE_ID));
+        if (getArguments().containsKey(StepListFragment.ARG_RECIPE_ID)) {
+            mRecipe = RecipeContent.RECIPE_MAP.get(getArguments().getInt(StepListFragment.ARG_RECIPE_ID));
 
             if (getArguments().containsKey(ARG_RECIPE_STEP_ID)) {
-                mRecipeStep = mRecipe.getSteps().get(getArguments().getInt(ARG_RECIPE_STEP_ID));
+                mStep = mRecipe.getSteps().get(getArguments().getInt(ARG_RECIPE_STEP_ID));
 
-                if (mRecipeStep != null) {
-                    mVideoUrl = mRecipeStep.getVideoURL();
+                if (mStep != null) {
+                    mVideoUrl = mStep.getVideoURL();
 
                     Toolbar toolbar = this.getActivity().findViewById(R.id.toolbar);
                     if (toolbar != null) {
-                        toolbar.setTitle(mRecipeStep.getShortDescription());
+                        toolbar.setTitle(mStep.getShortDescription());
                     }
                 }
             }
@@ -71,21 +68,21 @@ public class RecipeIndividualStepFragment extends Fragment {
             @NonNull LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState
     ) {
-        Log.v(RecipeIndividualStepFragment.class.getSimpleName(), "Created view for new " +
+        Log.v(IndividualStepFragment.class.getSimpleName(), "Created view for new " +
                 "individual step fragment.");
         View rootView = inflater.inflate(R.layout.fragment_individual_step, container, false);
 
-        if (mRecipeStep != null) {
+        if (mStep != null) {
             initializePlayer(rootView);
             ((TextView) rootView.findViewById(R.id.step_instruction))
-                    .setText("Step " + mRecipeStep.getId() + ": " + mRecipeStep.getDescription());
+                    .setText("Step " + mStep.getId() + ": " + mStep.getDescription());
 
-            if (mRecipeStep.getId() == 0) {
+            if (mStep.getId() == 0) {
                 ((Button) rootView.findViewById(R.id.previous_step_button))
                         .setVisibility(View.INVISIBLE);
             }
 
-            if (mRecipeStep.getId() == mRecipe.getSteps().size()-1) {
+            if (mStep.getId() == mRecipe.getSteps().size()-1) {
                 ((Button) rootView.findViewById(R.id.next_step_button))
                         .setVisibility(View.INVISIBLE);
             }
@@ -107,7 +104,7 @@ public class RecipeIndividualStepFragment extends Fragment {
         MediaSource videoSource =
                 new ProgressiveMediaSource.Factory(dataSourceFactory)
                         .createMediaSource(Uri.parse(mVideoUrl));
-        Log.v(RecipeIndividualStepFragment.class.getSimpleName() + "URL: ", mVideoUrl);
+        Log.v(IndividualStepFragment.class.getSimpleName() + "URL: ", mVideoUrl);
 
         // Prepare the player with the source.
         player.prepare(videoSource);

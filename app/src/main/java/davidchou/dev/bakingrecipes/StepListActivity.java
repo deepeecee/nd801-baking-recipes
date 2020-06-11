@@ -22,7 +22,7 @@ import android.view.MenuItem;
  * item details are presented side-by-side with a list of items
  * in a {@link RecipeListActivity}.
  */
-public class RecipeStepsActivity extends AppCompatActivity {
+public class StepListActivity extends AppCompatActivity {
 
     private boolean mTwoPane;
     private final int FIRST_STEP_ID = 0;
@@ -58,25 +58,26 @@ public class RecipeStepsActivity extends AppCompatActivity {
             // using a fragment transaction.
             Bundle arguments = new Bundle();
             arguments.putInt(
-                    RecipeStepsFragment.ARG_RECIPE_ID,
-                    getIntent().getIntExtra(RecipeStepsFragment.ARG_RECIPE_ID, 1));
+                    StepListFragment.ARG_RECIPE_ID,
+                    getIntent().getIntExtra(StepListFragment.ARG_RECIPE_ID, 1));
 
-            arguments.putBoolean(RecipeStepsFragment.TWO_PANE_KEY,
-                                 mTwoPane);
+            arguments.putBoolean(
+                    StepListFragment.TWO_PANE_KEY,
+                    mTwoPane);
 
             arguments.putInt(
-                    RecipeIndividualStepFragment.ARG_RECIPE_STEP_ID,
+                    IndividualStepFragment.ARG_RECIPE_STEP_ID,
                     FIRST_STEP_ID);
 
-            RecipeStepsFragment fragment = new RecipeStepsFragment();
+            StepListFragment fragment = new StepListFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.recipe_steps_secondary_container, fragment)
                     .commit();
 
             if (mTwoPane) {
-                Log.v(RecipeStepsActivity.class.getSimpleName(), "In mTwoPane logic.");
-                RecipeIndividualStepFragment individualFragment = new RecipeIndividualStepFragment();
+                Log.v(StepListActivity.class.getSimpleName(), "In mTwoPane logic.");
+                IndividualStepFragment individualFragment = new IndividualStepFragment();
                 individualFragment.setArguments(arguments);
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.recipe_video_container, individualFragment)
