@@ -87,7 +87,6 @@ public class RecipeRecyclerViewAdapter
 
     @Override
     public void onBindViewHolder(final RecipeRecyclerViewAdapter.ViewHolder holder, int position) {
-        holder.mIdView.setText(String.valueOf(mValues.get(position).getId()));
         holder.mContentView.setText(mValues.get(position).getName());
 
         holder.itemView.setTag(mValues.get(position));
@@ -100,12 +99,10 @@ public class RecipeRecyclerViewAdapter
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        final TextView mIdView;
         final TextView mContentView;
 
         ViewHolder(View view) {
             super(view);
-            mIdView = (TextView) view.findViewById(R.id.list_item_id);
             mContentView = (TextView) view.findViewById(R.id.list_item_content);
         }
     }

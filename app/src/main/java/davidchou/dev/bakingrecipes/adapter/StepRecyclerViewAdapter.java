@@ -67,7 +67,7 @@ public class StepRecyclerViewAdapter
             ViewGroup parent, int viewType
     ) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.recipe_steps_list_content, parent, false);
+                .inflate(R.layout.step_list_content, parent, false);
         return new StepRecyclerViewAdapter.ViewHolder(view);
     }
 
@@ -94,8 +94,8 @@ public class StepRecyclerViewAdapter
 
         ViewHolder(View view) {
             super(view);
-            mIdView = (TextView) view.findViewById(R.id.previous_step_button);
-            mContentView = (TextView) view.findViewById(R.id.next_step_button);
+            mIdView = (TextView) view.findViewById(R.id.step_id);
+            mContentView = (TextView) view.findViewById(R.id.step_list_content);
         }
     }
 }
