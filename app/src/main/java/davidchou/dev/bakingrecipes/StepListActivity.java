@@ -3,18 +3,23 @@ package davidchou.dev.bakingrecipes;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
-
-import android.util.Log;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.ActionBar;
+import androidx.recyclerview.widget.RecyclerView;
+import davidchou.dev.bakingrecipes.adapter.StepRecyclerViewAdapter;
+import davidchou.dev.bakingrecipes.data.Ingredient;
+import davidchou.dev.bakingrecipes.data.Recipe;
+import davidchou.dev.bakingrecipes.data.RecipeContent;
+import davidchou.dev.bakingrecipes.data.Step;
 
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
+
+import java.util.List;
 
 /**
  * An activity representing a single Item detail screen. This
@@ -25,7 +30,14 @@ import android.view.MenuItem;
 public class StepListActivity extends AppCompatActivity {
 
     private boolean mTwoPane;
+    private int mRecipeId;
+    private Recipe mRecipe;
+    private List<Step> mSteps;
+
     private final int FIRST_STEP_ID = 0;
+
+    public static final String ARG_RECIPE_ID = "recipe_id";
+    public static final String TWO_PANE_KEY = "is_two_pane_key";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,56 +46,69 @@ public class StepListActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Send some data to another person.", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        if (findViewById(R.id.recipe_video_container) != null) {
-            mTwoPane = true;
+        mTwoPane = findViewById(R.id.recipe_video_container) != null;
+        mRecipeId = getIntent().getIntExtra(ARG_RECIPE_ID, 1);
+        mRecipe = RecipeContent.RECIPE_MAP.get(mRecipeId);
+
+        maybeSetupStepList(toolbar);
+        maybeSetupVideoFragment();
+    }
+
+    private void maybeSetupStepList(Toolbar toolbar) {
+        if (mRecipe != null && toolbar != null) {
+            toolbar.setTitle(mRecipe.getName());
+            mSteps = mRecipe.getSteps();
         }
 
-        if (savedInstanceState == null) {
-            // Create the detail fragment and add it to the activity
-            // using a fragment transaction.
+        if (mRecipe != null) {
+            TextView ingredientsView =
+                    (TextView) findViewById(R.id.recipe_ingredients);
+            assert ingredientsView != null;
+            for (Ingredient ingredient : mRecipe.getIngredients()) {
+                ingredientsView.append("- " + ingredient.toString() + "\n");
+            }
+
+            RecyclerView recyclerView = findViewById(R.id.recipe_steps_list);
+            assert recyclerView != null;
+            setupRecyclerView(recyclerView);
+        }
+    }
+
+    private void maybeSetupVideoFragment() {
+        Log.v(StepListActivity.class.getSimpleName(), "Is Two Pane?" + mTwoPane);
+        if (mTwoPane) {
             Bundle arguments = new Bundle();
             arguments.putInt(
-                    StepListFragment.ARG_RECIPE_ID,
-                    getIntent().getIntExtra(StepListFragment.ARG_RECIPE_ID, 1));
+                    ARG_RECIPE_ID,
+                    getIntent().getIntExtra(ARG_RECIPE_ID, 1));
 
             arguments.putBoolean(
-                    StepListFragment.TWO_PANE_KEY,
+                    TWO_PANE_KEY,
                     mTwoPane);
 
             arguments.putInt(
                     IndividualStepFragment.ARG_RECIPE_STEP_ID,
                     FIRST_STEP_ID);
 
-            StepListFragment fragment = new StepListFragment();
-            fragment.setArguments(arguments);
+            IndividualStepFragment individualFragment = new IndividualStepFragment();
+            individualFragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.recipe_steps_secondary_container, fragment)
+                    .add(R.id.recipe_video_container, individualFragment)
                     .commit();
-
-            if (mTwoPane) {
-                Log.v(StepListActivity.class.getSimpleName(), "In mTwoPane logic.");
-                IndividualStepFragment individualFragment = new IndividualStepFragment();
-                individualFragment.setArguments(arguments);
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.recipe_video_container, individualFragment)
-                        .commit();
-            }
         }
+    }
+
+    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
+        recyclerView
+                .setAdapter(
+                        new StepRecyclerViewAdapter(this, mSteps,
+                                                    mTwoPane, mRecipe));
     }
 
     @Override

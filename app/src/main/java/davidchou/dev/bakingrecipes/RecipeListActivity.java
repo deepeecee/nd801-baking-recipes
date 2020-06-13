@@ -6,8 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -59,10 +57,6 @@ public class RecipeListActivity extends AppCompatActivity {
         toolbar.setTitle(getTitle());
 
         populateRecipesFromNetworkJson();
-
-        if (findViewById(R.id.recipe_steps_secondary_container) != null) {
-            mTwoPane = true;
-        }
     }
 
     private void populateRecipesFromNetworkJson() {
@@ -107,6 +101,6 @@ public class RecipeListActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recipe_list);
         assert recyclerView != null;
         recyclerView
-                .setAdapter(new RecipeRecyclerViewAdapter(this, mRecipes, mTwoPane));
+                .setAdapter(new RecipeRecyclerViewAdapter(this, mRecipes));
     }
 }

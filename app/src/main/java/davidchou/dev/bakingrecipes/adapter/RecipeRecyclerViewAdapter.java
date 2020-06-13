@@ -16,28 +16,25 @@ import davidchou.dev.bakingrecipes.Constants;
 import davidchou.dev.bakingrecipes.R;
 import davidchou.dev.bakingrecipes.RecipeListActivity;
 import davidchou.dev.bakingrecipes.StepListActivity;
-import davidchou.dev.bakingrecipes.StepListFragment;
 import davidchou.dev.bakingrecipes.data.Ingredient;
 import davidchou.dev.bakingrecipes.data.Recipe;
-import davidchou.dev.bakingrecipes.data.RecipeContent;
 import davidchou.dev.bakingrecipes.widget.BakingRecipesWidgetService;
 
 import static android.content.Context.MODE_PRIVATE;
+import static davidchou.dev.bakingrecipes.StepListActivity.ARG_RECIPE_ID;
 
 public class RecipeRecyclerViewAdapter
         extends RecyclerView.Adapter<RecipeRecyclerViewAdapter.ViewHolder> {
 
     private final RecipeListActivity mParentActivity;
     private final List<Recipe> mValues;
-    private final boolean mTwoPane;
     private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             Recipe recipe = (Recipe) view.getTag();
             Context context = view.getContext();
             Intent intent = new Intent(context, StepListActivity.class);
-            intent.putExtra(StepListFragment.ARG_RECIPE_ID, recipe.getId());
-            intent.putExtra(StepListFragment.TWO_PANE_KEY, mTwoPane);
+            intent.putExtra(ARG_RECIPE_ID, recipe.getId());
             context.startActivity(intent);
 
             // Update the widget to have the most recently used ingredients of the clicked recipe.
@@ -69,12 +66,10 @@ public class RecipeRecyclerViewAdapter
 
     public RecipeRecyclerViewAdapter(
             RecipeListActivity parent,
-            List<Recipe> recipes,
-            boolean twoPane
+            List<Recipe> recipes
     ) {
         mValues = recipes;
         mParentActivity = parent;
-        mTwoPane = twoPane;
     }
 
     @Override

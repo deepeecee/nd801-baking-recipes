@@ -18,10 +18,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import davidchou.dev.bakingrecipes.Constants;
-import davidchou.dev.bakingrecipes.adapter.RecipeRecyclerViewAdapter;
-import davidchou.dev.bakingrecipes.data.Ingredient;
-import davidchou.dev.bakingrecipes.data.Recipe;
-import davidchou.dev.bakingrecipes.data.RecipeContent;
 
 public class BakingRecipesWidgetService extends IntentService {
 
@@ -76,8 +72,6 @@ public class BakingRecipesWidgetService extends IntentService {
                 getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE);
         String ingredients = sharedpreferences.getString(Constants.MOST_RECENT_INGREDIENTS,
                                                         "No ingredients yet!");
-
-        Log.v(BakingRecipesWidgetService.class.getSimpleName(), ingredients);
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this,

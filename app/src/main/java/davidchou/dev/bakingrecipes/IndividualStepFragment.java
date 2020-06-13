@@ -36,16 +36,13 @@ public class IndividualStepFragment extends Fragment {
     private PlayerView mPlayerView;
     private SimpleExoPlayer player;
     private String mVideoUrl;
-    private boolean playWhenReady = true;
-    private int currentWindow = 0;
-    private long playbackPosition = 0;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(StepListFragment.ARG_RECIPE_ID)) {
-            mRecipe = RecipeContent.RECIPE_MAP.get(getArguments().getInt(StepListFragment.ARG_RECIPE_ID));
+        if (getArguments().containsKey(StepListActivity.ARG_RECIPE_ID)) {
+            mRecipe = RecipeContent.RECIPE_MAP.get(getArguments().getInt(StepListActivity.ARG_RECIPE_ID));
 
             if (getArguments().containsKey(ARG_RECIPE_STEP_ID)) {
                 mStep = mRecipe.getSteps().get(getArguments().getInt(ARG_RECIPE_STEP_ID));
@@ -126,6 +123,4 @@ public class IndividualStepFragment extends Fragment {
             player.release();
         }
     }
-
-
 }

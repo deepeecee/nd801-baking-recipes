@@ -1,7 +1,6 @@
 package davidchou.dev.bakingrecipes.adapter;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +11,14 @@ import java.util.List;
 import androidx.recyclerview.widget.RecyclerView;
 import davidchou.dev.bakingrecipes.IndividualStepFragment;
 import davidchou.dev.bakingrecipes.R;
-import davidchou.dev.bakingrecipes.StepListFragment;
+import davidchou.dev.bakingrecipes.StepListActivity;
 import davidchou.dev.bakingrecipes.data.Recipe;
 import davidchou.dev.bakingrecipes.data.Step;
 
 public class StepRecyclerViewAdapter
         extends RecyclerView.Adapter<StepRecyclerViewAdapter.ViewHolder> {
 
-    private final StepListFragment mParentFragment;
+    private final StepListActivity mParentActivity;
     private final List<Step> mValues;
     private final boolean mTwoPane;
     private final Recipe mRecipe;
@@ -30,7 +29,7 @@ public class StepRecyclerViewAdapter
 
             Bundle arguments = new Bundle();
             arguments.putInt(
-                    StepListFragment.ARG_RECIPE_ID,
+                    StepListActivity.ARG_RECIPE_ID,
                     mRecipe.getId());
             arguments.putInt(
                     IndividualStepFragment.ARG_RECIPE_STEP_ID,
@@ -39,25 +38,26 @@ public class StepRecyclerViewAdapter
             stepFragment.setArguments(arguments);
 
             if (mTwoPane) {
-                mParentFragment.getActivity().getSupportFragmentManager().beginTransaction()
+                mParentActivity.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.recipe_video_container, stepFragment, "findThisFragment")
                         .addToBackStack(null).commit();
             } else {
-                mParentFragment.getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.recipe_steps_secondary_container, stepFragment, "findThisFragment")
+                mParentActivity.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.recipe_steps_replaceable_container, stepFragment,
+                           "findThisFragment")
                         .addToBackStack(null).commit();
             }
         }
     };
 
     public StepRecyclerViewAdapter(
-            StepListFragment parent,
+            StepListActivity parent,
             List<Step> recipes,
             boolean twoPane,
             Recipe mRecipe
     ) {
         mValues = recipes;
-        mParentFragment = parent;
+        mParentActivity = parent;
         mTwoPane = twoPane;
         this.mRecipe = mRecipe;
     }

@@ -28,7 +28,6 @@ public class BakingRecipesWidgetProvider extends AppWidgetProvider {
         if (ingredients == null) {
             ingredients = "No ingredients yet!";
         }
-        Log.v(BakingRecipesWidgetProvider.class.getSimpleName(), ingredients);
 
         views.setTextViewText(R.id.ingredients_widget_text, ingredients);
 
