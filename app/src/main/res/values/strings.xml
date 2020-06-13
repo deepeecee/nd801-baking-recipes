@@ -2,7 +2,7 @@
     <string name="app_name">Baking Recipes</string>
     <string name="title_item_detail">Item Detail</string>
     <string name="ingredients">Ingredients</string>
-    <string name="video_label">Watch Video Instructions</string>
+    <string name="video_label">Video Instructions</string>
     <string name="prev">PREV</string>
     <string name="next">NEXT</string>
     <string name="ingredients_widget_header">Baking Ingredients</string>

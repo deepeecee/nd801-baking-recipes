@@ -12,13 +12,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import davidchou.dev.bakingrecipes.IndividualStepFragment;
 import davidchou.dev.bakingrecipes.R;
 import davidchou.dev.bakingrecipes.StepListActivity;
+import davidchou.dev.bakingrecipes.StepListFragment;
 import davidchou.dev.bakingrecipes.data.Recipe;
 import davidchou.dev.bakingrecipes.data.Step;
 
 public class StepRecyclerViewAdapter
         extends RecyclerView.Adapter<StepRecyclerViewAdapter.ViewHolder> {
 
-    private final StepListActivity mParentActivity;
+    private final StepListFragment mParentFragment;
     private final List<Step> mValues;
     private final boolean mTwoPane;
     private final Recipe mRecipe;
@@ -38,11 +39,11 @@ public class StepRecyclerViewAdapter
             stepFragment.setArguments(arguments);
 
             if (mTwoPane) {
-                mParentActivity.getSupportFragmentManager().beginTransaction()
+                mParentFragment.getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.recipe_video_container, stepFragment, "findThisFragment")
                         .addToBackStack(null).commit();
             } else {
-                mParentActivity.getSupportFragmentManager().beginTransaction()
+                mParentFragment.getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.recipe_steps_replaceable_container, stepFragment,
                            "findThisFragment")
                         .addToBackStack(null).commit();
@@ -51,13 +52,13 @@ public class StepRecyclerViewAdapter
     };
 
     public StepRecyclerViewAdapter(
-            StepListActivity parent,
+            StepListFragment parent,
             List<Step> recipes,
             boolean twoPane,
             Recipe mRecipe
     ) {
         mValues = recipes;
-        mParentActivity = parent;
+        mParentFragment = parent;
         mTwoPane = twoPane;
         this.mRecipe = mRecipe;
     }

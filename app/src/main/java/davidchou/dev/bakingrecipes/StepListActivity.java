@@ -56,59 +56,45 @@ public class StepListActivity extends AppCompatActivity {
         mRecipeId = getIntent().getIntExtra(ARG_RECIPE_ID, 1);
         mRecipe = RecipeContent.RECIPE_MAP.get(mRecipeId);
 
-        maybeSetupStepList(toolbar);
-        maybeSetupVideoFragment();
+        Bundle arguments = new Bundle();
+        arguments.putInt(
+                ARG_RECIPE_ID,
+                getIntent().getIntExtra(ARG_RECIPE_ID, 1));
+
+        arguments.putBoolean(
+                TWO_PANE_KEY,
+                mTwoPane);
+
+        arguments.putInt(
+                IndividualStepFragment.ARG_RECIPE_STEP_ID,
+                FIRST_STEP_ID);
+
+        maybeSetupStepList(toolbar, arguments);
+        maybeSetupVideoFragment(arguments);
     }
 
-    private void maybeSetupStepList(Toolbar toolbar) {
+    private void maybeSetupStepList(Toolbar toolbar, Bundle arguments) {
         if (mRecipe != null && toolbar != null) {
             toolbar.setTitle(mRecipe.getName());
             mSteps = mRecipe.getSteps();
         }
 
-        if (mRecipe != null) {
-            TextView ingredientsView =
-                    (TextView) findViewById(R.id.recipe_ingredients);
-            assert ingredientsView != null;
-            for (Ingredient ingredient : mRecipe.getIngredients()) {
-                ingredientsView.append("- " + ingredient.toString() + "\n");
-            }
-
-            RecyclerView recyclerView = findViewById(R.id.recipe_steps_list);
-            assert recyclerView != null;
-            setupRecyclerView(recyclerView);
-        }
+        StepListFragment fragment = new StepListFragment();
+        fragment.setArguments(arguments);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.recipe_steps_replaceable_container, fragment)
+                .commit();
     }
 
-    private void maybeSetupVideoFragment() {
+    private void maybeSetupVideoFragment(Bundle arguments) {
         Log.v(StepListActivity.class.getSimpleName(), "Is Two Pane?" + mTwoPane);
         if (mTwoPane) {
-            Bundle arguments = new Bundle();
-            arguments.putInt(
-                    ARG_RECIPE_ID,
-                    getIntent().getIntExtra(ARG_RECIPE_ID, 1));
-
-            arguments.putBoolean(
-                    TWO_PANE_KEY,
-                    mTwoPane);
-
-            arguments.putInt(
-                    IndividualStepFragment.ARG_RECIPE_STEP_ID,
-                    FIRST_STEP_ID);
-
             IndividualStepFragment individualFragment = new IndividualStepFragment();
             individualFragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.recipe_video_container, individualFragment)
                     .commit();
         }
-    }
-
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView
-                .setAdapter(
-                        new StepRecyclerViewAdapter(this, mSteps,
-                                                    mTwoPane, mRecipe));
     }
 
     @Override

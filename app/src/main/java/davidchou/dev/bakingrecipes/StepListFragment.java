@@ -30,9 +30,6 @@ import davidchou.dev.bakingrecipes.data.Step;
  */
 public class StepListFragment extends Fragment {
 
-    public static final String ARG_RECIPE_ID = "recipe_id";
-    public static final String TWO_PANE_KEY = "is_two_pane_key";
-
     private Recipe mRecipe;
 
     /**
@@ -50,8 +47,8 @@ public class StepListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_RECIPE_ID)) {
-            mRecipe = RecipeContent.RECIPE_MAP.get(getArguments().getInt(ARG_RECIPE_ID));
+        if (getArguments().containsKey(StepListActivity.ARG_RECIPE_ID)) {
+            mRecipe = RecipeContent.RECIPE_MAP.get(getArguments().getInt(StepListActivity.ARG_RECIPE_ID));
 
             if (mRecipe != null) {
                 Activity activity = this.getActivity();
@@ -65,8 +62,8 @@ public class StepListFragment extends Fragment {
             }
         }
 
-        if (getArguments().containsKey(TWO_PANE_KEY)) {
-            mTwoPane = getArguments().getBoolean(TWO_PANE_KEY);
+        if (getArguments().containsKey(StepListActivity.TWO_PANE_KEY)) {
+            mTwoPane = getArguments().getBoolean(StepListActivity.TWO_PANE_KEY);
         }
     }
 
@@ -75,7 +72,7 @@ public class StepListFragment extends Fragment {
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-        View rootView = inflater.inflate(R.layout.fragment_recipe_steps_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_steps_list, container, false);
 
         if (mRecipe != null) {
             TextView ingredientsView =
