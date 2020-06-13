@@ -1,7 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#09C"
+    android:theme="@style/Widget.MaterialComponents.ActionBar.Primary"
+    android:background="@color/design_default_color_secondary"
     android:padding="@dimen/widget_margin"
     android:orientation="vertical">
 

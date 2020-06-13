@@ -88,7 +88,6 @@ public class StepListActivity extends AppCompatActivity {
     }
 
     private void maybeSetupVideoFragment() {
-        Log.v(StepListActivity.class.getSimpleName(), "Is Two Pane?" + mTwoPane);
         if (mTwoPane) {
             IndividualStepFragment individualFragment = new IndividualStepFragment();
             getSupportFragmentManager().beginTransaction()
@@ -112,7 +111,6 @@ public class StepListActivity extends AppCompatActivity {
                 getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE);
         int id = sharedpreferences.getInt(Constants.MOST_RECENT_STEP_ID,
                                           FIRST_STEP_ID);
-        Log.v(StepListActivity.class.getSimpleName(), "Step ID: " + id);
         if (id > 0) {
             SharedPreferences.Editor editor =
                     getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE).edit();
@@ -124,6 +122,7 @@ public class StepListActivity extends AppCompatActivity {
                     .replace(mTwoPane
                                      ? R.id.recipe_video_container
                                      : R.id.recipe_steps_replaceable_container, individualFragment)
+                    .addToBackStack(null)
                     .commit();
         }
 
@@ -134,7 +133,6 @@ public class StepListActivity extends AppCompatActivity {
                 getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE);
         int id = sharedpreferences.getInt(Constants.MOST_RECENT_STEP_ID,
                                           FIRST_STEP_ID);
-        Log.v(StepListActivity.class.getSimpleName(), "Step ID: " + id);
         if (mRecipe != null && id < mRecipe.getSteps().size() - 1) {
             SharedPreferences.Editor editor =
                     getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE).edit();
@@ -146,6 +144,7 @@ public class StepListActivity extends AppCompatActivity {
                     .replace(mTwoPane
                                      ? R.id.recipe_video_container
                                      : R.id.recipe_steps_replaceable_container, individualFragment)
+                    .addToBackStack(null)
                     .commit();
         }
     }

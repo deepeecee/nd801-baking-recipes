@@ -13,7 +13,6 @@ public class RecipeContent {
     public static void populateRecipeMap(List<Recipe> recipes) {
         for (Recipe recipe : recipes) {
             RECIPE_MAP.put(recipe.getId(), recipe);
-            Log.v(RecipeContent.class.getName(), recipe.getName());
         }
     }
 }

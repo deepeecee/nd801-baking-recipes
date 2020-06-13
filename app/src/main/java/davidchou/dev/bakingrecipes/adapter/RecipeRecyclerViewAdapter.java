@@ -54,13 +54,6 @@ public class RecipeRecyclerViewAdapter
 
             context.startActivity(intent);
 
-            Log.v(
-                    RecipeRecyclerViewAdapter.class.getSimpleName(),
-                    context.getSharedPreferences(
-                            Constants.SHARED_PREFERENCES,
-                            MODE_PRIVATE)
-                            .getString(Constants.MOST_RECENT_INGREDIENTS, "Ingredients"));
-
             BakingRecipesWidgetService.startRecipeUpdateService(context);
         }
     };

@@ -67,7 +67,6 @@ public class IndividualStepFragment extends Fragment {
 
         if (mStep != null) {
             mVideoUrl = mStep.getVideoURL();
-            Log.v(IndividualStepFragment.class.getSimpleName(), "Video URL: " + mVideoUrl);
 
             Toolbar toolbar = this.getActivity().findViewById(R.id.toolbar);
             if (toolbar != null) {
@@ -83,8 +82,6 @@ public class IndividualStepFragment extends Fragment {
             @NonNull LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState
     ) {
-        Log.v(IndividualStepFragment.class.getSimpleName(), "Created view for new " +
-                "individual step fragment.");
         View rootView = inflater.inflate(R.layout.fragment_individual_step, container, false);
 
         mPlayerView = rootView.findViewById(R.id.video_view);
@@ -129,7 +126,6 @@ public class IndividualStepFragment extends Fragment {
         MediaSource videoSource =
                 new ProgressiveMediaSource.Factory(dataSourceFactory)
                         .createMediaSource(Uri.parse(mVideoUrl));
-        Log.v(IndividualStepFragment.class.getSimpleName() + "URL: ", mVideoUrl);
 
         // Prepare the player with the source.
         player.prepare(videoSource);

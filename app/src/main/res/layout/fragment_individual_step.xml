@@ -46,7 +46,6 @@
                 android:minHeight="100dp"
                 android:orientation="horizontal">
 
-                <!-- TODO: Add click functionality to these buttons so they actually reload items.-->
                 <Button
                     android:id="@+id/previous_step_button"
                     android:layout_width="96dp"
