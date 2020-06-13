@@ -135,6 +135,8 @@ public class IndividualStepFragment extends Fragment {
         player.prepare(videoSource);
         mPlayerView.setVisibility(View.VISIBLE);
         mImageView.setVisibility(View.GONE);
+        mPlayerView.setControllerAutoShow(false);
+        mPlayerView.setControllerShowTimeoutMs(1500);
         player.setPlayWhenReady(true);
     }
 
