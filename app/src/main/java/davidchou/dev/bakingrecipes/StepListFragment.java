@@ -1,6 +1,7 @@
 package davidchou.dev.bakingrecipes;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,6 +22,8 @@ import davidchou.dev.bakingrecipes.data.Recipe;
 import davidchou.dev.bakingrecipes.data.RecipeContent;
 import davidchou.dev.bakingrecipes.data.Ingredient;
 import davidchou.dev.bakingrecipes.data.Step;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A fragment representing a single Recipe detail screen.
@@ -47,24 +50,28 @@ public class StepListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(StepListActivity.ARG_RECIPE_ID)) {
-            mRecipe = RecipeContent.RECIPE_MAP.get(getArguments().getInt(StepListActivity.ARG_RECIPE_ID));
+        SharedPreferences sharedpreferences =
+                getActivity().getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE);
+        int recipeId = sharedpreferences.getInt(Constants.MOST_RECENT_RECIPE_ID,
+                                                1);
 
-            if (mRecipe != null) {
-                Activity activity = this.getActivity();
+        mRecipe = RecipeContent.RECIPE_MAP.get(recipeId);
 
-                Toolbar toolbar = this.getActivity().findViewById(R.id.toolbar);
-                if (toolbar != null) {
-                    toolbar.setTitle(mRecipe.getName());
-                }
+        if (mRecipe != null) {
+            Activity activity = this.getActivity();
 
-                mSteps = mRecipe.getSteps();
+            Toolbar toolbar = this.getActivity().findViewById(R.id.toolbar);
+            if (toolbar != null) {
+                toolbar.setTitle(mRecipe.getName());
             }
+
+            mSteps = mRecipe.getSteps();
         }
 
-        if (getArguments().containsKey(StepListActivity.TWO_PANE_KEY)) {
-            mTwoPane = getArguments().getBoolean(StepListActivity.TWO_PANE_KEY);
-        }
+        SharedPreferences sharedPreferences =
+                getActivity().getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE);
+        mTwoPane = sharedPreferences.getBoolean(Constants.IS_TWO_PANE,
+                                             false);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package davidchou.dev.bakingrecipes.adapter;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,12 +11,16 @@ import android.widget.TextView;
 import java.util.List;
 
 import androidx.recyclerview.widget.RecyclerView;
+import davidchou.dev.bakingrecipes.Constants;
 import davidchou.dev.bakingrecipes.IndividualStepFragment;
 import davidchou.dev.bakingrecipes.R;
 import davidchou.dev.bakingrecipes.StepListActivity;
 import davidchou.dev.bakingrecipes.StepListFragment;
+import davidchou.dev.bakingrecipes.data.Ingredient;
 import davidchou.dev.bakingrecipes.data.Recipe;
 import davidchou.dev.bakingrecipes.data.Step;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class StepRecyclerViewAdapter
         extends RecyclerView.Adapter<StepRecyclerViewAdapter.ViewHolder> {
@@ -37,6 +43,12 @@ public class StepRecyclerViewAdapter
                     step.getId());
             IndividualStepFragment stepFragment = new IndividualStepFragment();
             stepFragment.setArguments(arguments);
+
+            Context context = view.getContext();
+            SharedPreferences.Editor editor =
+                    context.getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE).edit();
+            editor.putInt(Constants.MOST_RECENT_STEP_ID, step.getId());
+            editor.apply();
 
             if (mTwoPane) {
                 mParentFragment.getActivity().getSupportFragmentManager().beginTransaction()

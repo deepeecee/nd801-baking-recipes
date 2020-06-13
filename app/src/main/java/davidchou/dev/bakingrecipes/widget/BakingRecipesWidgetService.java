@@ -68,9 +68,9 @@ public class BakingRecipesWidgetService extends IntentService {
     }
 
     private void updateIngredientsInWidget() {
-        SharedPreferences sharedpreferences =
+        SharedPreferences sharedPreferences =
                 getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE);
-        String ingredients = sharedpreferences.getString(Constants.MOST_RECENT_INGREDIENTS,
+        String ingredients = sharedPreferences.getString(Constants.MOST_RECENT_INGREDIENTS,
                                                         "No ingredients yet!");
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);

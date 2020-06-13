@@ -1,6 +1,7 @@
 package davidchou.dev.bakingrecipes;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,6 +18,7 @@ import davidchou.dev.bakingrecipes.data.Step;
 
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.List;
@@ -34,7 +36,7 @@ public class StepListActivity extends AppCompatActivity {
     private Recipe mRecipe;
     private List<Step> mSteps;
 
-    private final int FIRST_STEP_ID = 0;
+    public static final int FIRST_STEP_ID = 0;
 
     public static final String ARG_RECIPE_ID = "recipe_id";
     public static final String TWO_PANE_KEY = "is_two_pane_key";
@@ -52,45 +54,43 @@ public class StepListActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        SharedPreferences sharedPreferences =
+                getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE);
+        mRecipeId = sharedPreferences.getInt(Constants.MOST_RECENT_RECIPE_ID,
+                                             1);
+
         mTwoPane = findViewById(R.id.recipe_video_container) != null;
-        mRecipeId = getIntent().getIntExtra(ARG_RECIPE_ID, 1);
+        SharedPreferences.Editor editor =
+                getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE).edit();
+        editor.putBoolean(Constants.IS_TWO_PANE, mTwoPane);
+
+
         mRecipe = RecipeContent.RECIPE_MAP.get(mRecipeId);
 
-        Bundle arguments = new Bundle();
-        arguments.putInt(
-                ARG_RECIPE_ID,
-                getIntent().getIntExtra(ARG_RECIPE_ID, 1));
+        editor.putInt(Constants.MOST_RECENT_STEP_ID, FIRST_STEP_ID);
 
-        arguments.putBoolean(
-                TWO_PANE_KEY,
-                mTwoPane);
+        editor.apply();
 
-        arguments.putInt(
-                IndividualStepFragment.ARG_RECIPE_STEP_ID,
-                FIRST_STEP_ID);
-
-        maybeSetupStepList(toolbar, arguments);
-        maybeSetupVideoFragment(arguments);
+        maybeSetupStepList(toolbar);
+        maybeSetupVideoFragment();
     }
 
-    private void maybeSetupStepList(Toolbar toolbar, Bundle arguments) {
+    private void maybeSetupStepList(Toolbar toolbar) {
         if (mRecipe != null && toolbar != null) {
             toolbar.setTitle(mRecipe.getName());
             mSteps = mRecipe.getSteps();
         }
 
         StepListFragment fragment = new StepListFragment();
-        fragment.setArguments(arguments);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.recipe_steps_replaceable_container, fragment)
                 .commit();
     }
 
-    private void maybeSetupVideoFragment(Bundle arguments) {
+    private void maybeSetupVideoFragment() {
         Log.v(StepListActivity.class.getSimpleName(), "Is Two Pane?" + mTwoPane);
         if (mTwoPane) {
             IndividualStepFragment individualFragment = new IndividualStepFragment();
-            individualFragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.recipe_video_container, individualFragment)
                     .commit();
@@ -105,5 +105,44 @@ public class StepListActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void previousStep(View view) {
+        SharedPreferences sharedpreferences =
+                getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE);
+        int id = sharedpreferences.getInt(Constants.MOST_RECENT_STEP_ID,
+                                          FIRST_STEP_ID);
+        Log.v(StepListActivity.class.getSimpleName(), "Step ID: " + id);
+        if (id > 0) {
+            SharedPreferences.Editor editor =
+                    getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE).edit();
+            editor.putInt(Constants.MOST_RECENT_STEP_ID, id-1);
+            editor.apply();
+
+            IndividualStepFragment individualFragment = new IndividualStepFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.recipe_video_container, individualFragment)
+                    .commit();
+        }
+
+    }
+
+    public void nextStep(View view) {
+        SharedPreferences sharedpreferences =
+                getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE);
+        int id = sharedpreferences.getInt(Constants.MOST_RECENT_STEP_ID,
+                                          FIRST_STEP_ID);
+        Log.v(StepListActivity.class.getSimpleName(), "Step ID: " + id);
+        if (mRecipe != null && id < mRecipe.getSteps().size() - 1) {
+            SharedPreferences.Editor editor =
+                    getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE).edit();
+            editor.putInt(Constants.MOST_RECENT_STEP_ID, id+1);
+            editor.apply();
+
+            IndividualStepFragment individualFragment = new IndividualStepFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.recipe_video_container, individualFragment)
+                    .commit();
+        }
     }
 }

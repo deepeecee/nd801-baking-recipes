@@ -1,13 +1,22 @@
 package davidchou.dev.bakingrecipes;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 
@@ -19,12 +28,16 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import java.io.ByteArrayOutputStream;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import davidchou.dev.bakingrecipes.data.Recipe;
 import davidchou.dev.bakingrecipes.data.RecipeContent;
 import davidchou.dev.bakingrecipes.data.Step;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class IndividualStepFragment extends Fragment {
 
@@ -34,6 +47,7 @@ public class IndividualStepFragment extends Fragment {
     private Step mStep;
 
     private PlayerView mPlayerView;
+    private ImageView mImageView;
     private SimpleExoPlayer player;
     private String mVideoUrl;
 
@@ -41,22 +55,26 @@ public class IndividualStepFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(StepListActivity.ARG_RECIPE_ID)) {
-            mRecipe = RecipeContent.RECIPE_MAP.get(getArguments().getInt(StepListActivity.ARG_RECIPE_ID));
+        SharedPreferences sharedpreferences =
+                getActivity().getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE);
+        int recipeId = sharedpreferences.getInt(Constants.MOST_RECENT_RECIPE_ID,
+                                              1);
+        int stepId = sharedpreferences.getInt(Constants.MOST_RECENT_STEP_ID,
+                                          StepListActivity.FIRST_STEP_ID);
 
-            if (getArguments().containsKey(ARG_RECIPE_STEP_ID)) {
-                mStep = mRecipe.getSteps().get(getArguments().getInt(ARG_RECIPE_STEP_ID));
+        mRecipe = RecipeContent.RECIPE_MAP.get(recipeId);
+        mStep = mRecipe.getSteps().get(stepId);
 
-                if (mStep != null) {
-                    mVideoUrl = mStep.getVideoURL();
+        if (mStep != null) {
+            mVideoUrl = mStep.getVideoURL();
+            Log.v(IndividualStepFragment.class.getSimpleName(), "Video URL: " + mVideoUrl);
 
-                    Toolbar toolbar = this.getActivity().findViewById(R.id.toolbar);
-                    if (toolbar != null) {
-                        toolbar.setTitle(mStep.getShortDescription());
-                    }
-                }
+            Toolbar toolbar = this.getActivity().findViewById(R.id.toolbar);
+            if (toolbar != null) {
+                toolbar.setTitle(mStep.getShortDescription());
             }
         }
+
     }
 
     @Nullable
@@ -69,8 +87,13 @@ public class IndividualStepFragment extends Fragment {
                 "individual step fragment.");
         View rootView = inflater.inflate(R.layout.fragment_individual_step, container, false);
 
+        mPlayerView = rootView.findViewById(R.id.video_view);
+        mImageView = rootView.findViewById(R.id.image_view);
+
         if (mStep != null) {
+
             initializePlayer(rootView);
+
             ((TextView) rootView.findViewById(R.id.step_instruction))
                     .setText("Step " + mStep.getId() + ": " + mStep.getDescription());
 
@@ -91,8 +114,13 @@ public class IndividualStepFragment extends Fragment {
     private void initializePlayer(View rootView) {
         Context context = getContext();
         player = new SimpleExoPlayer.Builder(context).build();
-        mPlayerView = rootView.findViewById(R.id.video_view);
         mPlayerView.setPlayer(player);
+
+        if (mVideoUrl.isEmpty()) {
+            return;
+        }
+
+        mPlayerView.setUseArtwork(false);
         // Produces DataSource instances through which media data is loaded.
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
                                                                             Util.getUserAgent(context, "yourApplicationName"));
@@ -105,6 +133,8 @@ public class IndividualStepFragment extends Fragment {
 
         // Prepare the player with the source.
         player.prepare(videoSource);
+        mPlayerView.setVisibility(View.VISIBLE);
+        mImageView.setVisibility(View.GONE);
         player.setPlayWhenReady(true);
     }
 

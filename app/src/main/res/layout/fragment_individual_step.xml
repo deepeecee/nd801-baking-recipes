@@ -16,11 +16,20 @@
         android:text="@string/video_label"
         android:textSize="24sp" />
 
-    <com.google.android.exoplayer2.ui.PlayerView
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/video_height"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/baking_video_placeholder"
+        android:visibility="visible"/>
+
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/video_height"
-        android:layout_marginTop="32dp"/>
+        android:layout_marginTop="32dp"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/step_instruction"
@@ -44,6 +53,7 @@
             android:layout_height="48dp"
             android:layout_margin="@dimen/text_margin"
             android:text="@string/prev"
+            android:onClick="previousStep"
             app:layout_constraintEnd_toStartOf="@+id/next_step_button"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -55,6 +65,7 @@
             android:layout_height="48dp"
             android:layout_margin="@dimen/text_margin"
             android:text="@string/next"
+            android:onClick="nextStep"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/previous_step_button"

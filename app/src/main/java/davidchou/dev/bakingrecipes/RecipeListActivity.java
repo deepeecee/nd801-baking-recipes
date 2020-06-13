@@ -88,7 +88,7 @@ public class RecipeListActivity extends AppCompatActivity {
         try {
             Type recipeListType = TypeToken.getParameterized(List.class, Recipe.class).getType();
             InputStream is = getResources().openRawResource(R.raw.baking_data);
-            Reader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            Reader reader = new BufferedReader(new InputStreamReader(is, "UTF-16"));
             mRecipes = gson.fromJson(reader, recipeListType);
             RecipeContent.populateRecipeMap(mRecipes);
             setupRecyclerView();

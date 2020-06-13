@@ -34,13 +34,12 @@ public class RecipeRecyclerViewAdapter
             Recipe recipe = (Recipe) view.getTag();
             Context context = view.getContext();
             Intent intent = new Intent(context, StepListActivity.class);
-            intent.putExtra(ARG_RECIPE_ID, recipe.getId());
-            context.startActivity(intent);
 
             // Update the widget to have the most recently used ingredients of the clicked recipe.
             SharedPreferences.Editor editor =
                     context.getSharedPreferences(Constants.SHARED_PREFERENCES, MODE_PRIVATE).edit();
             editor.putString(Constants.MOST_RECENT_RECIPE, recipe.getName());
+            editor.putInt(Constants.MOST_RECENT_RECIPE_ID, recipe.getId());
 
             List<Ingredient> ingredients = recipe.getIngredients();
             StringBuilder ingredientsString = new StringBuilder();
@@ -52,6 +51,8 @@ public class RecipeRecyclerViewAdapter
 
             editor.putString(Constants.MOST_RECENT_INGREDIENTS, ingredientsString.toString());
             editor.apply();
+
+            context.startActivity(intent);
 
             Log.v(
                     RecipeRecyclerViewAdapter.class.getSimpleName(),
