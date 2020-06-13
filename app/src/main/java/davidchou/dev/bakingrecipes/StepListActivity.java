@@ -121,7 +121,9 @@ public class StepListActivity extends AppCompatActivity {
 
             IndividualStepFragment individualFragment = new IndividualStepFragment();
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.recipe_video_container, individualFragment)
+                    .replace(mTwoPane
+                                     ? R.id.recipe_video_container
+                                     : R.id.recipe_steps_replaceable_container, individualFragment)
                     .commit();
         }
 
@@ -141,7 +143,9 @@ public class StepListActivity extends AppCompatActivity {
 
             IndividualStepFragment individualFragment = new IndividualStepFragment();
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.recipe_video_container, individualFragment)
+                    .replace(mTwoPane
+                                     ? R.id.recipe_video_container
+                                     : R.id.recipe_steps_replaceable_container, individualFragment)
                     .commit();
         }
     }
